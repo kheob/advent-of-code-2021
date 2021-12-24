@@ -1,17 +1,61 @@
-import * as fs from "fs";
+import * as fs from 'fs';
 
-const data = fs.readFileSync("day3data.txt", "utf8");
-const dataArray = data.split("\n");
+const data = fs.readFileSync('day3data.txt', 'utf8');
+let dataArray: string[] = data.split('\n');
 
-const counts = Array<number>(12).fill(0);
+const co2 = find(dataArray, 'co2');
+const oxygen = find(dataArray, 'oxygen');
 
-dataArray.forEach((item) => {
-  for (let i = 0; i < item.length; i++) {
-    counts[i] += parseInt(item[i]);
+console.log(parseInt(co2, 2) * parseInt(oxygen, 2));
+
+function find(data: string[], filter: 'oxygen' | 'co2') {
+  let i = 0;
+  let s = [...data];
+
+  while (s.length !== 1) {
+    console.log(s.length);
+    s = subset([...s], filter, i);
+    i++;
   }
-});
 
-const gamma = counts.map((count) => (count > 500 ? 1 : 0)).join("");
-const epsilon = counts.map((count) => (count > 500 ? 0 : 1)).join("");
+  return s[0];
+}
 
-console.log(parseInt(gamma, 2) * parseInt(epsilon, 2));
+function subset(
+  data: string[],
+  filter: 'oxygen' | 'co2',
+  index: number,
+): string[] {
+  let [zeroes, ones] = [0, 0];
+  let ret: string[] = [];
+
+  data.forEach((number) => {
+    if (number.charAt(index) === '0') {
+      zeroes += 1;
+    } else {
+      ones += 1;
+    }
+  });
+
+  data.forEach((number) => {
+    switch (filter) {
+      case 'co2':
+        // least
+        const least = zeroes <= ones ? '0' : '1';
+        if (number.charAt(index) === least) {
+          ret.push(number);
+        }
+        break;
+
+      case 'oxygen':
+        // most
+        const most = zeroes > ones ? '0' : '1';
+        if (number.charAt(index) === most) {
+          ret.push(number);
+        }
+        break;
+    }
+  });
+
+  return ret;
+}
