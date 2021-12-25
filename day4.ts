@@ -21,16 +21,24 @@ numbers.forEach((calledNumber) => {
       });
 
       if (checkBoard(board)) {
-        let sum = 0;
-        board.forEach((row) => {
-          row.forEach((col) => {
-            if (col !== '') {
-              sum += parseInt(col);
-            }
-          });
+        // check the rest of the board to make sure they're won
+        const isLast = boards.every((b) => {
+          return checkBoard(b);
         });
-        console.log(parseInt(calledNumber) * sum);
-        exit();
+
+        if (isLast) {
+          let sum = 0;
+          board.forEach((row) => {
+            row.forEach((col) => {
+              if (col !== '') {
+                sum += parseInt(col);
+              }
+            });
+          });
+          console.log(calledNumber);
+          console.log(parseInt(calledNumber) * sum);
+          exit();
+        }
       }
     });
   });
